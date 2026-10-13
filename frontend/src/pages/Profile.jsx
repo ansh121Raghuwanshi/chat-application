@@ -2,25 +2,56 @@ import React from 'react'
 import { FaCameraRetro } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
 import dp from '../assets/blank-profile-picture-973460_1280.png'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import {serverUrl} from "../main"
+import { useRef } from 'react';
+import axios from 'axios';
+import { setUserData } from '../redux/userSlice';
 function Profile() {
     let {userData}=useSelector(state=>state.user)
+    let dispatch=useDispatch()
     let navigate=useNavigate()
+    let[name,setName]=useState(userData.name || "")
+    let[frontedImage,setFrontedImage]=useState(userData.image || dp)
+    let[backendImage,setBackendImage]=useState(null)
+
+    let image=useRef()
+    const handleImage=(e)=>{
+      let file=e.target.files[0]
+      setBackendImage(file)
+      setFrontedImage(URL.createObjectURL(file))
+    }
+    const handleProfile=async (e)=>{
+      e.preventDefault()
+      try {
+        let formData=new FormData()
+        formData.append("name",name)
+        if(backendImage){ 
+          formData.append("image",backendImage)
+        }
+        let result= await axios.put(`${serverUrl}/api/user/profile`,formData,{withCredentials:true})
+        dispatch(setUserData(result.data))
+      } catch (error) {
+        
+      }
+    }
   return (
     <div className='w-full h-[100vh] bg-slate-200 flex flex-col justify-center items-center gap-[20px]'>
         <div className='fixed top-[20px] left-[20px] hover:cursor-pointer' onClick={()=>  navigate("/")}>
             <IoIosArrowBack className='w-[30px] h-[30px]'/>
             </div>
-     <div className=' bg-white rounded-full border-4 border-[#20c7ff] shadow-gray-400 shadow-lg relative '>
+     <div className=' bg-white rounded-full border-4 border-[#20c7ff] shadow-gray-400 shadow-lg relative ' onClick={()=>image.current.click()}>
     
-    <div className='w-[200px] h-[200px] rounded-full overflow-hidden '>
-        <img src={dp} alt="" className='h-[100%]'/>
+    <div className='w-[200px] h-[200px] rounded-full overflow-hidden flex justify-center items-center '>
+        <img src={frontedImage} alt="" className='h-[100%]'/>
     </div>
     <FaCameraRetro className='absolute bottom-4 right-5 w-[25px] h-[25px]' />
      </div>
-     <form className='w-[95%]  max-w-[500px] flex flex-col gap-[20px] items-center justify-center'>
-        <input type="text" placeholder='Enter your name'  className='w-[90%] h-[50px] outline-none border-2 border-[#20c7ff] px-[20px] py-[10px] bg-[white] rounded-lg shadow-gray-400 shadow-lg' />
+     <form className='w-[95%]  max-w-[500px] flex flex-col gap-[20px] items-center justify-center' onSubmit={handleProfile}>
+      <input type="file" accept='image/*' ref={image} hidden onChange={handleImage} />
+        <input type="text" placeholder='Enter your name'  className='w-[90%] h-[50px] outline-none border-2 border-[#20c7ff] px-[20px] py-[10px] bg-[white] rounded-lg shadow-gray-400 shadow-lg' onChange={(e)=>setName(e.target.value)} value={name} />
         <input type="text" readOnly  className='w-[90%] h-[50px] outline-none border-2 border-[#20c7ff] px-[20px] py-[10px] bg-[white] rounded-lg shadow-gray-400 shadow-lg text-gray-400' value={userData?.userName}/>
         <input type="email"  readOnly  className='w-[90%] h-[50px] outline-none border-2 border-[#20c7ff] px-[20px] py-[10px] bg-[white] rounded-lg shadow-gray-400 shadow-lg text-gray-400' value={userData?.email}/>
         <button className='p-[20px] py-[10px] bg-[#20c7ff] rounded-2xl  shadow-gray-400 shadow-lg text-[20px] w-[150px] mt-[20px] font-semibold hover:shadow-inner'>Save profile</button>
