@@ -1,9 +1,29 @@
 import React from 'react'
-
+import { IoIosArrowBack } from "react-icons/io";
+import dp from '../assets/blank-profile-picture-973460_1280.png'
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedUser } from '../redux/userSlice';
 function MessageArea() {
+  let{selectedUser}=useSelector(state=>state.user)
+  let dispatch=useDispatch()
   return (
-    <div className='lg:w-[70%] w-full h-full bg-slate-200 border-l-2 border-gray-300'>
-      
+    //css me hidden lg:block,lg:flex likhna h 
+    <div className={`lg:w-[70%] ${selectedUser?"flex":"hidden"} w-full h-full   bg-slate-200 border-l-2 border-gray-300`}>
+
+      {selectedUser &&   <div className='w-full h-[100px] bg-[#20c7ff] rounded-b-[30px] shadow-gray-400 shadow-lg flex items-center px-[10px] gap-[20px]'>
+              <div className=' hover:cursor-pointer' onClick={()=>dispatch(setSelectedUser(null))}>
+                         <IoIosArrowBack className='w-[30px] h-[30px] text-white'/>
+               </div> 
+       <div className='w-[50px] h-[50px] rounded-full overflow-hidden flex justify-center items-center shadow-gray-500 bg-white cursor-pointer shadow-lg '>
+        <img src={ selectedUser?.image || dp} alt="" className='h-[100%]'/>
+    </div>
+    <h1 className='text-white font-bold text-[20px]'>{selectedUser?.name || "User"}</h1>
+       </div>}
+       {!selectedUser && <div className='w-full h-full flex flex-col justify-center items-center'> 
+      <h1 className=' font-bold text-[50px]'>  Welcome to ZapChat </h1>
+      <span className='text-[30px] text-[#20c7ff] font-bold'>Chat Freindly !!</span>
+        </div>}
+       
     </div>
   )
 }
