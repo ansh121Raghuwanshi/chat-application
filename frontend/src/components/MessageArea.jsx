@@ -8,7 +8,7 @@ function MessageArea() {
   let dispatch=useDispatch()
   return (
     //css me hidden lg:block,lg:flex likhna h 
-    <div className={`lg:w-[70%] ${selectedUser?"flex":"hidden"} w-full h-full   bg-slate-200 border-l-2 border-gray-300`}>
+    <div className={`lg:w-[70%] ${selectedUser?"flex":"hidden"} w-full h-full lg:flex  bg-slate-200 border-l-2 border-gray-300`}>
 
       {selectedUser &&   <div className='w-full h-[100px] bg-[#20c7ff] rounded-b-[30px] shadow-gray-400 shadow-lg flex items-center px-[10px] gap-[20px]'>
               <div className=' hover:cursor-pointer' onClick={()=>dispatch(setSelectedUser(null))}>
@@ -21,7 +21,7 @@ function MessageArea() {
        </div>}
        {!selectedUser && <div className='w-full h-full flex flex-col justify-center items-center'> 
       <h1 className=' font-bold text-[50px]'>  Welcome to ZapChat </h1>
-      <span className='text-[30px] text-[#20c7ff] font-bold'>Chat Freindly !!</span>
+      <span className='text-[30px] text-[#20c7ff] font-bold'>Chat Friendly !!</span>
         </div>}
        
     </div>

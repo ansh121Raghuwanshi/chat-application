@@ -8,9 +8,10 @@ const conversationSchema=new mongoose.Schema({
             ref:"User"
         }
     ],
-    messages:[
-        {type:String}
-    ]
+    messages:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Message"
+ } ]
 },{timeseries:true})
 
 const Conversation=mongoose.model("Conversation",conversationSchema)
