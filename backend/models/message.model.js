@@ -13,7 +13,11 @@ receiver:{
 },
 message:{
     type:String,
-    required:true
+    default:""
+},
+image:{
+    type:String,
+    default:""
 }
 
 
