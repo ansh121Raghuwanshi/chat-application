@@ -25,10 +25,23 @@ export const sendMessage=async (req,res)=>{
         })
        }else{
         conversation.messages.push(newMessage._id)
-        conversation.save()
+      await  conversation.save()
        }
        return res.status(201).json(newMessage)
     } catch (error) {
             return res.status(2500).json({message:`send message error ${error}`})
+}
+}
+export const getMessage=async (req,res)=>{
+try {
+    let conversation =await Conversation.findOne({
+            participants:{$all:[sender,receiver]}
+        }).populate("messages")
+        if(!conversation){
+            return res.status(400).json({message:" conversation is not found"})
+        }
+        return res.status(200).json(conversation?.messages)
+} catch (error) {
+     return res.status(2500).json({message:`getMesaage error ${error}`})
 }
 }
