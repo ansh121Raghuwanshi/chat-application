@@ -7,6 +7,7 @@ import {RiEmojiStickerLine, RiSendPlane2Fill} from "react-icons/ri"
 import {FaImages} from "react-icons/fa6"
 import { useState } from 'react';
 import EmojiPicker from "emoji-picker-react"
+import SenderMessage from './SenderMessage';
 
 function MessageArea() {
   let{selectedUser}=useSelector(state=>state.user)
@@ -33,11 +34,17 @@ let [input,setInput]=useState("")
     <h1 className='text-white font-bold text-[20px]'>{selectedUser?.name || "User"}</h1>
        </div>
 
-       <div className='w-full h-[550px] '>
+       <div className='w-full h-[550px] flex flex-col pt-[30px] px-[20px] '>
+
+
        { showPicker && <div className='absolute bottom-[150px] left-[20px]'><EmojiPicker width={300} height={350} className='shadow-lg' onEmojiClick={onEmojiClick}/></div> }
+         <SenderMessage/>
        </div>
+     
         </div>
       }
+
+
        {!selectedUser && <div className='w-full h-full flex flex-col justify-center items-center'> 
       <h1 className=' font-bold text-[50px]'>  Welcome to ZapChat </h1>
       <span className='text-[30px] text-[#20c7ff] font-bold'>Chat Friendly !!</span>
