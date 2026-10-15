@@ -65,10 +65,14 @@ import User from "../models/user.model.js"
             sameSite:"Strict",
             secure:false
         })
-        return res.status(200).json({
-            _id:user._id,
-            email:user.email
-        })
+        // return res.status(200).json({
+        //     _id:user._id,
+        //     email:user.email
+        // })
+        const safeUser = user.toObject()
+        delete safeUser.password
+        return res.status(200).json(safeUser)
+
 
     } catch (error) {
         return res.status(500).json({message:`login error ${error}`})

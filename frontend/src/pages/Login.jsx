@@ -22,6 +22,7 @@ function Login() {
                 let result= await axios.post(`${serverUrl}/api/auth/login`,{
                 email,password
                 },{withCredentials:true})
+                console.log("login response:", result.data); 
               dispatch(setUserData(result.data))
               navigate("/")
                 setEmail("")

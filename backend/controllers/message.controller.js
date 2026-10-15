@@ -29,21 +29,23 @@ export const sendMessage=async (req,res)=>{
        }
        return res.status(201).json(newMessage)
     } catch (error) {
-            return res.status(2500).json({message:`send message error ${error}`})
+            return res.status(500).json({message:`send message error ${error}`})
 }
 }
-export const getMessage=async (req,res)=>{
-try {
-    let sender=req.userId
-    let {receiver}=req.params
-    let conversation =await Conversation.findOne({
-            participants:{$all:[sender,receiver]}
-        }).populate("messages")
-        if(!conversation){
-            return res.status(400).json({message:" conversation is not found"})
-        }
-        return res.status(200).json(conversation?.messages)
-} catch (error) {
-     return res.status(2500).json({message:`getMesaage error ${error}`})
-}
-}
+export const getMessage = async (req, res) => {
+  try {
+    let sender = req.userId;
+    let { receiver } = req.params;
+
+    let conversation = await Conversation.findOne({
+      participants: { $all: [sender, receiver] },
+    }).populate("messages");
+
+    if (!conversation) {
+      return res.status(200).json([]);   // ✅ naya chat, koi message nahi
+    }
+    return res.status(200).json(conversation.messages);
+  } catch (error) {
+    return res.status(500).json({ message: `getMessage error ${error}` });   // ✅
+  }
+};
