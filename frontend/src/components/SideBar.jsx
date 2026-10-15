@@ -8,7 +8,7 @@ import axios from 'axios';
 import { setOtherUsers, setSelectedUser, setUserData } from '../redux/userSlice';
 import { useNavigate } from 'react-router-dom';
 function SideBar() {
-    let {userData,otherUsers,selectedUser}=useSelector(state=>state.user)
+    let {userData,otherUsers,selectedUser,onlineUsers}=useSelector(state=>state.user)
     let [search,setSearch]=useState(false)
     let dispatch=useDispatch()
     let navigate=useNavigate()
@@ -38,7 +38,7 @@ function SideBar() {
         <img src={userData.image || dp} alt="" className='h-[100%]'/>
     </div>
         </div>
-         <div className='w-full flex items-center'>
+         <div className='w-full flex items-center gap-[10px] overflow-y-auto py[15px]'>
             {!search &&  <div className='w-[60px] h-[60px] mt-[10px] rounded-full overflow-hidden flex justify-center items-center bg-white shadow-gray-500 shadow-lg cursor-pointer' onClick={()=>setSearch(true)}>
             <IoIosSearch className='w-[25px] h-[25px]'/>
     </div> }
@@ -48,9 +48,13 @@ function SideBar() {
         <RxCross2 className='w-[25px] h-[25px] cursor-pointer' onClick={()=>setSearch(false)}/>
         </form>}
         {!search && otherUsers?.map((user)=>(
-                <div className='w-[60px] h-[60px] mt-[10px] rounded-full overflow-hidden flex justify-center items-center shadow-gray-500 bg-white shadow-lg '>
+          onlineUsers?.includes(user._id) &&
+          <div className='relative rounded-full shadow-gray-500 bg-white shadow-lg  flex justify-center items-center '>
+                <div className='w-[60px] h-[60px]  rounded-full overflow-hidden flex justify-center items-center '>
         <img src={user.image || dp} alt="" className='h-[100%]'/>
     </div>
+    <span className='w-[15px] h-[15px] rounded-full absolute bg-[#3aff20] bottom-1 right-0 shadow-gray-500  shadow-md'></span>
+      </div>
             ))}
             
          </div>

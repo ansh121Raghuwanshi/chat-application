@@ -30,6 +30,9 @@ const handleImage=(e)=>{
   }
 const handleSendMessage=async (e)=>{
   e.preventDefault()
+  if(input.length==0 && backendImage==null){
+    return null
+  }
   try {
     let formData=new FormData()
     formData.append("message",input)
@@ -78,7 +81,7 @@ return ()=> socket?.off("newMessage")
        <div className='w-full h-[550px] flex flex-col py-[30px] px-[20px] overflow-auto '>
 
 
-       { showPicker && <div className='absolute bottom-[150px] left-[20px]'><EmojiPicker width={300} height={350} className='shadow-lg' onEmojiClick={onEmojiClick}/></div> }
+       { showPicker && <div className='absolute bottom-[150px] left-[20px]'><EmojiPicker width={300} height={350} className='shadow-lg z-[100]' onEmojiClick={onEmojiClick}/></div> }
      
         {messages?.map((mess)=>(
           mess.sender==userData._id?<SenderMessage image={mess.image} message={mess.message}/>:<ReceiverMessage  image={mess.image} message={mess.message}/>
@@ -108,9 +111,10 @@ return ()=> socket?.off("newMessage")
         <div onClick={()=>image.current.click()}>
           <FaImages className='w-[25px] h-[25px] text-white cursor-pointer'/>
         </div>
-        <button>
+        {input.length>0 || backendImage!=null &&
+        (<button>
           <RiSendPlane2Fill className='w-[25px] h-[25px] text-white cursor-pointer'/>
-        </button>
+        </button>)}
          </form>
        </div>}
        
