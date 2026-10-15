@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { IoIosArrowBack } from "react-icons/io";
 import dp from '../assets/blank-profile-picture-973460_1280.png'
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,7 +15,7 @@ import { useRef } from 'react';
 import { setMessages } from '../redux/messageSlice';
 
 function MessageArea() {
-  let{selectedUser,userData}=useSelector(state=>state.user)
+  let{selectedUser,userData,socket}=useSelector(state=>state.user)
   let dispatch=useDispatch()
   let[showPicker,setShowPicker]=useState(false)
 let [input,setInput]=useState("")
@@ -52,6 +52,12 @@ const handleSendMessage=async (e)=>{
     setShowPicker(false)
   }
 
+  useEffect(()=>{
+socket?.on("newMessage",(mess)=>{
+  dispatch(setMessages([...messages,mess]))
+})
+return ()=> socket?.off("newMessage")
+  },[messages,setMessages])
 
   return (
     //css me hidden lg:block,lg:flex likhna h 
