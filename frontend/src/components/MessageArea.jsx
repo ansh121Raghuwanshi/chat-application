@@ -8,6 +8,7 @@ import {FaImages} from "react-icons/fa6"
 import { useState } from 'react';
 import EmojiPicker from "emoji-picker-react"
 import SenderMessage from './SenderMessage';
+import ReceiverMessage from './ReceiverMessage';
 
 function MessageArea() {
   let{selectedUser}=useSelector(state=>state.user)
@@ -39,6 +40,7 @@ let [input,setInput]=useState("")
 
        { showPicker && <div className='absolute bottom-[150px] left-[20px]'><EmojiPicker width={300} height={350} className='shadow-lg' onEmojiClick={onEmojiClick}/></div> }
          <SenderMessage/>
+         <ReceiverMessage/>
        </div>
      
         </div>
