@@ -1,20 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import dp from '../assets/blank-profile-picture-973460_1280.png'
 import { IoIosSearch } from 'react-icons/io'
 import {RxCross2} from "react-icons/rx";
 import {BiLogOutCircle} from "react-icons/bi";
 import axios from 'axios';
-import { setOtherUsers, setSelectedUser, setUserData } from '../redux/userSlice';
+import { serverUrl } from '../main'
+import { setOtherUsers, setSearchData, setSelectedUser, setUserData } from '../redux/userSlice';
 import { useNavigate } from 'react-router-dom';
 function SideBar() {
-    let {userData,otherUsers,selectedUser,onlineUsers}=useSelector(state=>state.user)
+    let {userData,otherUsers,selectedUser,onlineUsers,searchData}=useSelector(state=>state.user)
     let [search,setSearch]=useState(false)
     let dispatch=useDispatch()
     let navigate=useNavigate()
+    let[input,setInput]=useState("")
     const handleLogOut =async ()=>{
       try {
-        let result=await axios.get('${serverUrl/api/auth/logout}',{withCredentials:true})
+        let result=await axios.get(`${serverUrl}/api/auth/logout`,{withCredentials:true})
         dispatch(setUserData(null))
           dispatch(setOtherUsers(null))
           navigate("/login")
@@ -22,30 +24,67 @@ function SideBar() {
         console.log(error)
       } 
     }
+    const handleSearch =async ()=>{
+      try {
+        let result=await axios.get(`${serverUrl}/api/user/search?query=${input}`,{withCredentials:true})
+        dispatch(setSearchData(result.data))
+       
+      }catch(error){
+        console.log(error)
+      }
+    }
+    useEffect(()=>{
+      if(input){
+        handleSearch()
+      }else{
+        dispatch(setSearchData(null))
+      }
+      
+    },[input])
   return (
     <div className={`lg:w-[30%] w-full h-full lg:block bg-slate-200 ${!selectedUser?"block":"hidden"}`}>
 
-    <div className='w-[60px] h-[60px] mt-[10px] rounded-full overflow-hidden flex justify-center items-center bg-[#20c7ff] shadow-gray-500 shadow-lg cursor-pointer fixed bottom-[20px] left-[10px]' onClick={handleLogOut}>
+    <div className='w-[60px] h-[60px] mt-[10px] rounded-full overflow-hidden flex justify-center items-center bg-[#20c7ff] shadow-gray-500 shadow-lg cursor-pointer fixed bottom-[20px] left-[10px] ' onClick={handleLogOut}>
             <BiLogOutCircle className='w-[25px] h-[25px]'/>
     </div>
+
+    
 
         <div className='w-full h-[300px] bg-[#20c7ff] rounded-b-[30%] shadow-gray-400 shadow-lg flex flex-col  justify-center px-[10px]'>
        
         <h1 className='text-white font-bold text-[25px]'>ZapChat</h1>
         <div className='w-full flex justify-between items-center'>
-            <h1 className='text-gray-800 font-bold text-[25px]'>Hii,{userData.name || "user"}</h1>
+            <h1 className='text-gray-800 font-bold text-[25px]'>Hii,{userData?.name || "user"}</h1>
                <div className='w-[60px] h-[60px] rounded-full overflow-hidden flex justify-center items-center shadow-gray-500 bg-white cursor-pointer shadow-lg ' onClick={()=>navigate("/profile")}>
-        <img src={userData.image || dp} alt="" className='h-[100%]'/>
+        <img src={userData?.image || dp} alt="" className='h-[100%]'/>
     </div>
         </div>
-         <div className='w-full flex items-center gap-[10px] overflow-y-auto py[15px]'>
+        <div className={`w-full flex items-center gap-[10px] py-[15px] ${search ? "overflow-visible" : "overflow-y-auto"}`}>
             {!search &&  <div className='w-[60px] h-[60px] mt-[10px] rounded-full overflow-hidden flex justify-center items-center bg-white shadow-gray-500 shadow-lg cursor-pointer' onClick={()=>setSearch(true)}>
             <IoIosSearch className='w-[25px] h-[25px]'/>
     </div> }
-    {search && <form className='w-full h-[60px] bg-white rounded-full shadow-gray-500 shadow-lg flex items-center gap-[10px] mt-[10px] p-[20px]'>
+    {search && <form onSubmit={(e) => e.preventDefault()} className='w-full h-[60px] bg-white rounded-full shadow-gray-500 shadow-lg flex items-center gap-[10px] mt-[10px] p-[20px] relative'>
         <IoIosSearch className='w-[25px] h-[25px]'/>
-        <input type="text" placeholder='search user....' className='w-full h-full p-[10px] outline-0 border-0' />
+        <input type="text" placeholder='search user....' className='w-full h-full p-[10px] outline-0 border-0' onChange={(e)=>setInput(e.target.value)} value={input} />
         <RxCross2 className='w-[25px] h-[25px] cursor-pointer' onClick={()=>setSearch(false)}/>
+
+       <div className='flex  w-full h-[300px] overflow-y-auto flex-col gap-[10px] '>
+
+        {searchData?.map((user)=>(
+           <div className='w-[95%] h-[60px] flex  items-center gap-[20px] bg-white shadow-gray-500 shadow-lg rounded-full hover:bg-[#20c7ff]' onClick={()=>
+            {dispatch(setSelectedUser(user))
+              setSearch(false)
+              setInput("")
+            }}>
+                <div className='w-[60px] h-[60px]  rounded-full overflow-hidden flex justify-center items-center shadow-gray-500 bg-white shadow-lg '>
+        <img src={user.image || dp} alt="" className='h-[100%]'/>
+          </div>
+        <h1 className='text-gray-800 font-bold text-[20px]'>{user.name || user.userName}</h1>
+    </div>
+        ))}
+
+        </div>
+
         </form>}
         {!search && otherUsers?.map((user)=>(
           onlineUsers?.includes(user._id) &&
@@ -66,7 +105,7 @@ function SideBar() {
                 <div className='w-[60px] h-[60px]  rounded-full overflow-hidden flex justify-center items-center shadow-gray-500 bg-white shadow-lg '>
         <img src={user.image || dp} alt="" className='h-[100%]'/>
     </div>
-    <h1 className='text-gray-800 font-bold text-[20px]'>{user.name || user.username}</h1>
+    <h1 className='text-gray-800 font-bold text-[20px]'>{user.name || user.userName}</h1>
     </div>
             ))}
          </div>
