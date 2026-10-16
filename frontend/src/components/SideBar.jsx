@@ -49,7 +49,7 @@ function SideBar() {
         </form>}
         {!search && otherUsers?.map((user)=>(
           onlineUsers?.includes(user._id) &&
-          <div className='relative rounded-full shadow-gray-500 bg-white shadow-lg  flex justify-center items-center '>
+          <div className='relative rounded-full shadow-gray-500 bg-white shadow-lg  flex justify-center items-center cursor-pointer'onClick={()=>dispatch(setSelectedUser(user))}>
                 <div className='w-[60px] h-[60px]  rounded-full overflow-hidden flex justify-center items-center '>
         <img src={user.image || dp} alt="" className='h-[100%]'/>
     </div>
@@ -60,7 +60,7 @@ function SideBar() {
          </div>
          </div>
 
-         <div className='w-full h-[60vh] overflow-auto flex flex-col gap-[20px] items-center mt-[20px]'>
+         <div className='w-full h-[50%] overflow-auto flex flex-col gap-[20px] items-center mt-[20px]'>
           {otherUsers?.map((user)=>(
             <div className='w-[95%] h-[60px] flex  items-center gap-[20px] bg-white shadow-gray-500 shadow-lg rounded-full hover:bg-[#20c7ff]' onClick={()=>dispatch(setSelectedUser(user))}>
                 <div className='w-[60px] h-[60px]  rounded-full overflow-hidden flex justify-center items-center shadow-gray-500 bg-white shadow-lg '>
